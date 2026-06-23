@@ -246,7 +246,7 @@ const MasterAdmin = () => {
 
 
         {/* ── MAIN CARD ── */}
-        <div className="w-full max-w-5xl h-[600px] rounded-3xl border flex flex-col lg:flex-row overflow-hidden relative z-10 backdrop-blur-xl"
+        <div className="w-full max-w-5xl h-auto lg:h-[600px] min-h-[600px] rounded-3xl border flex flex-col lg:flex-row overflow-hidden relative z-10 backdrop-blur-xl"
           style={{
             background: theme === 'dark' ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.12)',
             borderColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.3)',
@@ -254,7 +254,7 @@ const MasterAdmin = () => {
           }}>
 
           {/* ── LEFT: FORM PANEL ── */}
-          <div className="w-full lg:w-1/2 flex flex-col px-10 py-8 relative backdrop-blur-md"
+          <div className="order-2 lg:order-1 w-full lg:w-1/2 flex flex-col px-6 py-8 sm:px-10 relative backdrop-blur-md"
             style={{ background: theme === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.35)' }}>
 
             {/* Top brand */}
@@ -354,7 +354,7 @@ const MasterAdmin = () => {
           </div>
 
           {/* ── RIGHT: PHOTO PANEL ── */}
-          <div className="hidden lg:block lg:w-1/2 relative overflow-hidden">
+          <div className="order-1 lg:order-2 flex w-full h-[250px] sm:h-[350px] lg:h-auto lg:w-1/2 relative overflow-hidden">
             {/* Campus photo fills the panel */}
             <img
               src={adminPanelSide}

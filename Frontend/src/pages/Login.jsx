@@ -99,7 +99,7 @@ const Login = () => {
 
 
       {/* ── MAIN CARD ── */}
-      <div className="w-full max-w-5xl h-[600px] rounded-3xl border flex flex-col lg:flex-row overflow-hidden relative z-10 backdrop-blur-xl"
+      <div className="w-full max-w-5xl h-auto lg:h-[600px] min-h-[600px] rounded-3xl border flex flex-col lg:flex-row overflow-hidden relative z-10 backdrop-blur-xl"
         style={{
           background: theme === 'dark' ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.12)',
           borderColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.3)',
@@ -108,7 +108,7 @@ const Login = () => {
       >
         
         {/* LEFT PANEL - Form Content Area */}
-        <div className="w-full lg:w-1/2 px-10 py-8 flex flex-col relative backdrop-blur-md"
+        <div className="order-2 lg:order-1 w-full lg:w-1/2 px-6 py-8 sm:px-10 flex flex-col relative backdrop-blur-md"
           style={{ background: theme === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.35)' }}
         >
           
@@ -223,9 +223,9 @@ const Login = () => {
 
         </div>
 
-        {/* RIGHT PANEL - Illustration Carousel (Hidden on mobile) */}
+        {/* RIGHT PANEL - Illustration Carousel */}
         <div
-          className="hidden lg:flex lg:w-1/2 overflow-hidden border-l border-slate-100 dark:border-white/[0.04] relative bg-[#f0f6ff] dark:bg-[#000000] flex-col"
+          className="order-1 lg:order-2 flex w-full h-[250px] sm:h-[350px] lg:h-auto lg:w-1/2 overflow-hidden border-b lg:border-b-0 lg:border-l border-slate-100 dark:border-white/[0.04] relative bg-[#f0f6ff] dark:bg-[#000000] flex-col"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
