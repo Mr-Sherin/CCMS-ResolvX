@@ -20,7 +20,7 @@ const ComplaintList = () => {
     try {
       setLoading(true);
       setError('');
-      const endpoint = user?.role === 'Admin' ? '/admin/complaints' : '/complaints';
+      const endpoint = (user?.role === 'Admin' || user?.role === 'MasterAdmin') ? '/admin/complaints' : '/complaints';
       const { data } = await api.get(endpoint);
       setComplaints(data);
     } catch (err) {
@@ -75,7 +75,7 @@ const ComplaintList = () => {
             <div className="flex items-center gap-2">
               <FileSpreadsheet className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />
               <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">
-                {user?.role === 'Admin' ? 'Review Logs' : 'My Complaint Log'}
+                {(user?.role === 'Admin' || user?.role === 'MasterAdmin') ? 'Review Logs' : 'My Complaint Log'}
               </h1>
             </div>
 
