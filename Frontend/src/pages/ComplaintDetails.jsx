@@ -243,7 +243,7 @@ const ComplaintDetails = () => {
                 </div>
 
                 {/* Admin Status update Card */}
-                {user?.role === 'Admin' && (
+                {(user?.role === 'Admin' || user?.role === 'MasterAdmin') && (
                   <div className="glass-panel p-6 rounded-lg border-slate-200 dark:border-white/5 space-y-4 shadow-sm border border-cyan-500/20 active-glow">
                     <h3 className="text-sm font-bold font-medium text-cyan-600 dark:text-cyan-400 flex items-center gap-1.5">
                       <Wrench className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
