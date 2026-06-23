@@ -252,7 +252,7 @@ const Home = () => {
                 <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                   <Mail className="w-5 h-5" />
                 </div>
-                <span className="text-sm font-medium">support@campus.edu</span>
+                <span className="text-sm font-medium">resolvx007@gmail.com</span>
               </div>
               <div className="flex flex-col items-center gap-3 p-6">
                 <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center">
