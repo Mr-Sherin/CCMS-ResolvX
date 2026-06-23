@@ -238,15 +238,15 @@ const MasterAdmin = () => {
         </div>
 
         {/* ── BACK TO HOME (top-left) ── */}
-        <Link to="/" className="absolute top-6 left-6 z-50 flex items-center gap-1.5 px-3 py-2 rounded-md backdrop-blur-md border text-slate-600 hover:text-slate-900 transition text-sm font-medium" style={{ background: 'rgba(255,255,255,0.25)', borderColor: 'rgba(255,255,255,0.4)' }}>
+        <Link to="/" className="absolute top-6 left-6 z-50 flex items-center gap-1.5 px-3 py-2 rounded-md backdrop-blur-md border text-slate-600 dark:text-white/80 hover:text-slate-900 dark:hover:text-white transition text-sm font-medium shadow-sm" style={{ background: theme === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.25)', borderColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.4)' }}>
           <ArrowLeft className="w-4 h-4" />
           Home
         </Link>
 
         <div className="absolute top-6 right-6 z-50">
           <button id="btn-theme-toggle" onClick={toggleTheme}
-            className="p-2.5 rounded-md backdrop-blur-md border text-white/80 hover:text-white transition cursor-pointer shadow-sm"
-            style={{ background: 'rgba(255,255,255,0.12)', borderColor: 'rgba(255,255,255,0.18)' }}>
+            className="p-2.5 rounded-md backdrop-blur-md border text-slate-600 dark:text-white/80 hover:text-slate-900 dark:hover:text-white transition cursor-pointer shadow-sm"
+            style={{ background: theme === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.12)', borderColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.18)' }}>
             {theme === 'light' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
         </div>
