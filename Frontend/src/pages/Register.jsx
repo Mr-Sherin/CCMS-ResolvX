@@ -112,7 +112,7 @@ const Register = () => {
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-hidden">
 
       {/* ── 3D PARTICLE MESH BACKGROUND ── */}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #e8e8ee 0%, #dfe0e8 30%, #eaeaef 60%, #e4e5ec 100%)' }}>
+      <div className="absolute inset-0" style={{ background: theme === 'dark' ? 'linear-gradient(135deg, #0f172a 0%, #020617 100%)' : 'linear-gradient(135deg, #e8e8ee 0%, #dfe0e8 30%, #eaeaef 60%, #e4e5ec 100%)' }}>
         <ParticleMesh />
       </div>
 
@@ -138,15 +138,15 @@ const Register = () => {
       {/* ── MAIN CARD ── */}
       <div className="w-full max-w-5xl h-[600px] rounded-3xl border flex flex-col lg:flex-row overflow-hidden relative z-10 backdrop-blur-xl"
         style={{
-          background: 'rgba(255,255,255,0.12)',
-          borderColor: 'rgba(255,255,255,0.3)',
+          background: theme === 'dark' ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.12)',
+          borderColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.3)',
           boxShadow: '0 8px 32px rgba(120, 80, 200, 0.08), inset 0 1px 0 rgba(255,255,255,0.25)',
         }}
       >
         
         {/* LEFT PANEL - Form Content Area */}
         <div className="w-full lg:w-1/2 px-10 py-8 flex flex-col relative backdrop-blur-md"
-          style={{ background: 'rgba(255,255,255,0.35)' }}
+          style={{ background: theme === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.35)' }}
         >
           
           {/* Logo / Brand Header */}
