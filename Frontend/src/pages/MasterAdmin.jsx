@@ -395,7 +395,7 @@ const MasterAdmin = () => {
     <div className="animated-bg min-h-screen text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-300">
       <Navbar />
 
-      <div className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-[auto_1fr] gap-6 items-start">
+      <div className="flex-1 w-full max-w-full px-6 py-8 md:py-10 grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8 md:gap-12 items-start">
         <Sidebar />
 
         <main className="space-y-6 w-full overflow-hidden">
