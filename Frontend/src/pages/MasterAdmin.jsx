@@ -247,7 +247,7 @@ const MasterAdmin = () => {
           <button id="btn-theme-toggle" onClick={toggleTheme}
             className="p-2.5 rounded-md backdrop-blur-md border text-white/80 hover:text-white transition cursor-pointer shadow-sm"
             style={{ background: 'rgba(255,255,255,0.12)', borderColor: 'rgba(255,255,255,0.18)' }}>
-            {theme === 'light' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+            {theme === 'light' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
         </div>
 
