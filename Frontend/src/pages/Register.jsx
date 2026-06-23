@@ -122,18 +122,7 @@ const Register = () => {
         Home
       </Link>
 
-      {/* ── THEME TOGGLE ── */}
-      <div className="absolute top-6 right-6 z-50">
-        <button
-          id="btn-theme-toggle"
-          onClick={toggleTheme}
-          className="p-2.5 rounded-md backdrop-blur-md border text-slate-600 dark:text-white/80 hover:text-slate-900 dark:hover:text-white transition cursor-pointer shadow-sm"
-          style={{ background: theme === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.12)', borderColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.18)' }}
-          title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
-        >
-          {theme === 'light' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-        </button>
-      </div>
+
 
       {/* ── MAIN CARD ── */}
       <div className="w-full max-w-5xl h-[600px] rounded-3xl border flex flex-col lg:flex-row overflow-hidden relative z-10 backdrop-blur-xl"
