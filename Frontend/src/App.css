@@ -1,0 +1,195 @@
+/* CCMS CSS Styling */
+
+.animated-bg {
+  background: linear-gradient(-45deg, #f8fafc, #f1f5f9, #e2e8f0, #f1f5f9);
+  background-size: 400% 400%;
+  animation: gradient-bg 15s ease infinite;
+}
+
+.dark .animated-bg {
+  background: linear-gradient(-45deg, #04050d, #080c25, #0c1236, #050818);
+  background-size: 400% 400%;
+}
+
+@keyframes gradient-bg {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Custom CSS-based dashboard elements */
+.status-badge-pending {
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  color: #b45309;
+}
+
+.dark .status-badge-pending {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  color: #facc15;
+}
+
+.status-badge-progress {
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(14, 165, 233, 0.25);
+  color: #0369a1;
+}
+
+.dark .status-badge-progress {
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  color: #22d3ee;
+}
+
+.status-badge-resolved {
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.25);
+  color: #15803d;
+}
+
+.dark .status-badge-resolved {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+}
+
+/* Glassmorphic Table design */
+.glass-table-row {
+  transition: all 0.2s ease;
+}
+
+.glass-table-row:hover {
+  background: rgba(0, 0, 0, 0.015);
+}
+
+.dark .glass-table-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Glass card active status glow */
+.active-glow {
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.dark .active-glow {
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+  border-color: rgba(0, 240, 255, 0.3);
+}
+
+/* Responsive grid layout adjustments */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Active Button Glow System Styles */
+@keyframes button-float {
+  0% { transform: translateY(0px) scale(1.04); }
+  50% { transform: translateY(-4px) scale(1.04); }
+  100% { transform: translateY(0px) scale(1.04); }
+}
+
+@keyframes button-pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4), 0 0 0 0 rgba(6, 182, 212, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(99, 102, 241, 0), 0 0 0 10px rgba(6, 182, 212, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0), 0 0 0 0 rgba(6, 182, 212, 0);
+  }
+}
+
+@keyframes button-pulse-ring-dark {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4), 0 0 0 0 rgba(139, 92, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 229, 255, 0), 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 229, 255, 0), 0 0 0 0 rgba(139, 92, 246, 0);
+  }
+}
+
+.active-glow-button {
+  position: relative;
+  z-index: 50 !important;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9) 0%, rgba(6, 182, 212, 0.9) 100%) !important;
+  border-color: #6366f1 !important;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.35),
+    0 4px 20px rgba(99, 102, 241, 0.3) !important;
+  animation: button-float 3s ease-in-out infinite, button-pulse-ring 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+  transform: scale(1.04);
+}
+
+.active-glow-button::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(to right, #6366f1, #06b6d4);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.dark .active-glow-button {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.45) 0%, rgba(0, 229, 255, 0.45) 100%) !important;
+  border-color: #00E5FF !important;
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.35),
+    0 0 20px rgba(0, 229, 255, 0.6),
+    0 0 40px rgba(139, 92, 246, 0.4) !important;
+  animation: button-float 3s ease-in-out infinite, button-pulse-ring-dark 2s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+}
+
+.dark .active-glow-button::before {
+  background: linear-gradient(to right, #00E5FF, #8B5CF6);
+}
+
+.active-glow-button:hover {
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.5),
+    0 4px 30px rgba(99, 102, 241, 0.5) !important;
+  transform: scale(1.05) translateY(-4px) !important;
+  animation-play-state: paused;
+}
+
+.dark .active-glow-button:hover {
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.5),
+    0 0 30px rgba(0, 229, 255, 0.9),
+    0 0 60px rgba(139, 92, 246, 0.7) !important;
+}
+
+/* Hover effects for regular (inactive) buttons */
+.inactive-glow-button {
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.inactive-glow-button:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  transform: translateY(-1px);
+}
+
+.dark .inactive-glow-button:hover:not(:disabled) {
+  box-shadow: 
+    0 0 15px rgba(0, 229, 255, 0.35),
+    0 0 30px rgba(139, 92, 246, 0.2);
+  border-color: rgba(0, 229, 255, 0.5) !important;
+}
