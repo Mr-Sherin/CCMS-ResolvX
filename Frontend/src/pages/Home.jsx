@@ -1,34 +1,44 @@
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Zap, BarChart3, Clock, ChevronRight, Mail, MapPin, Phone, Calendar, RefreshCw, FileText, CheckCircle2, Search, Eye, ShieldAlert, Wifi, Droplets } from 'lucide-react';
+import { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
+import { ShieldCheck, Zap, BarChart3, Clock, ChevronRight, Mail, MapPin, Phone, Calendar, RefreshCw, FileText, CheckCircle2, Search, Eye, ShieldAlert, Wifi, Droplets, Sun, Moon } from 'lucide-react';
 import heroBg from '../assets/custom_hero.jpg';
 import resolvxIcon from '../assets/resolvx_icon.png';
 
 const Home = () => {
+  const { theme, toggleTheme } = useContext(ThemeContext);
   return (
     <div className="bg-white dark:bg-[#000000] min-h-screen text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-500/30">
       
       {/* Navigation Bar */}
-      <header className="sticky top-0 z-50 border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-[#000000]/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div className="fixed top-0 left-0 right-0 z-50 pt-4 px-4 pointer-events-none">
+        <header className="pointer-events-auto max-w-4xl mx-auto h-14 flex items-center justify-between px-6 rounded-full border border-slate-200/50 dark:border-white/10 bg-white/70 dark:bg-[#0a0a0a]/70 backdrop-blur-md shadow-sm transition-all duration-300">
           <div className="flex items-center gap-2">
-            <img src={resolvxIcon} alt="ResolvX Icon" className="w-8 h-8 object-contain" />
+            <img src={resolvxIcon} alt="ResolvX Icon" className="w-7 h-7 object-contain" />
             <span className="font-bold tracking-tight text-lg">ResolvX</span>
           </div>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-500 dark:text-slate-400">
-            <a href="#about" className="hover:text-slate-900 dark:hover:text-white transition-colors">About</a>
-            <a href="#features" className="hover:text-slate-900 dark:hover:text-white transition-colors">Features</a>
-            <a href="#contact" className="hover:text-slate-900 dark:hover:text-white transition-colors">Contact</a>
+            <a href="#about" className="hover:text-slate-900 dark:hover:text-white transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">About</a>
+            <a href="#features" className="hover:text-slate-900 dark:hover:text-white transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Features</a>
+            <a href="#contact" className="hover:text-slate-900 dark:hover:text-white transition-colors relative after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[2px] after:bg-blue-500 after:transition-all after:duration-300 hover:after:w-full">Contact</a>
           </nav>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-slate-100/50 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
+              title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
+            >
+              {theme === 'light' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            </button>
             <Link 
               to="/login" 
-              className="text-sm font-medium px-4 py-2 rounded-md bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200 transition-colors"
+              className="text-sm font-medium px-5 py-2 rounded-full bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-black dark:hover:bg-slate-200 transition-colors shadow-sm"
             >
               Sign In
             </Link>
           </div>
-        </div>
-      </header>
+        </header>
+      </div>
 
       <main>
         {/* Hero Section */}
