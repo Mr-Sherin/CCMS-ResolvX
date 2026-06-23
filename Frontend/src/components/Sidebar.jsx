@@ -37,10 +37,20 @@ const Sidebar = ({ onOpenRaiseForm }) => {
           </p>
           <nav className="space-y-1">
             {user?.role === 'MasterAdmin' ? (
-              <NavLink to="/admin" className={navLinkClass}>
-                <LayoutDashboard className="w-4 h-4" />
-                Manage Admins
-              </NavLink>
+              <>
+                <NavLink to="/admin" className={navLinkClass}>
+                  <LayoutDashboard className="w-4 h-4" />
+                  Manage Admins
+                </NavLink>
+                <NavLink to="/admin-dashboard" className={navLinkClass}>
+                  <LayoutDashboard className="w-4 h-4" />
+                  Admin Dashboard
+                </NavLink>
+                <NavLink to="/complaints" className={navLinkClass}>
+                  <FileSpreadsheet className="w-4 h-4" />
+                  Review Logs
+                </NavLink>
+              </>
             ) : user?.role === 'Admin' ? (
               <>
                 <NavLink to="/admin-dashboard" className={navLinkClass}>

@@ -34,7 +34,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 // Role check: verifies the logged in user is of the specific allowed role
-const RoleRoute = ({ children, allowedRole }) => {
+const RoleRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useContext(AuthContext);
 
   if (loading) {
@@ -49,11 +49,11 @@ const RoleRoute = ({ children, allowedRole }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (user.role !== allowedRole) {
+  if (!allowedRoles.includes(user.role)) {
     // Redirect unauthorized roles back to their correct page
-    return user.role === 'Admin' 
-      ? <Navigate to="/admin-dashboard" replace />
-      : <Navigate to="/student-dashboard" replace />;
+    if (user.role === 'MasterAdmin') return <Navigate to="/admin" replace />;
+    if (user.role === 'Admin') return <Navigate to="/admin-dashboard" replace />;
+    return <Navigate to="/student-dashboard" replace />;
   }
 
   return children;
@@ -100,7 +100,7 @@ const App = () => {
               <Route
                 path="/student-dashboard"
                 element={
-                  <RoleRoute allowedRole="Student">
+                  <RoleRoute allowedRoles={['Student']}>
                     <StudentDashboard />
                   </RoleRoute>
                 }
@@ -110,7 +110,7 @@ const App = () => {
               <Route
                 path="/admin-dashboard"
                 element={
-                  <RoleRoute allowedRole="Admin">
+                  <RoleRoute allowedRoles={['Admin', 'MasterAdmin']}>
                     <AdminDashboard />
                   </RoleRoute>
                 }
