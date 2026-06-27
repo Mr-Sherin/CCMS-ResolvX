@@ -7,8 +7,8 @@ const seedMasterAdmin = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('MongoDB Connected');
 
-    const email = 'resolvx007@gmail.com';
-    const password = 'ResolvX007';
+    const email = 'resolvx@gmail.com';
+    const password = 'S^2ag@7626';
 
     // Check if it already exists
     const existing = await User.findOne({ email });

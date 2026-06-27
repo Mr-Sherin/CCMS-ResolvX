@@ -60,6 +60,8 @@ const MasterAdmin = () => {
 
   // Dashboard Management State
   const [admins, setAdmins] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [activeTab, setActiveTab] = useState('admins');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -67,24 +69,31 @@ const MasterAdmin = () => {
   // Modal Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editAdmin, setEditAdmin] = useState(null);
+  const [editStudent, setEditStudent] = useState(null);
   const [formName, setFormName] = useState('');
   const [formEmail, setFormEmail] = useState('');
   const [formPassword, setFormPassword] = useState('');
   const [formDepartment, setFormDepartment] = useState('');
   const [formStaffId, setFormStaffId] = useState('');
+  const [formSemester, setFormSemester] = useState('');
+  const [formAdmissionNo, setFormAdmissionNo] = useState('');
   const [formError, setFormError] = useState('');
   const [formSubmitting, setFormSubmitting] = useState(false);
 
-  // Fetch local admins
-  const fetchAdmins = useCallback(async () => {
+  // Fetch data
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
-      const { data } = await api.get('/master/admins');
-      setAdmins(data);
+      const [adminsRes, studentsRes] = await Promise.all([
+        api.get('/master/admins'),
+        api.get('/master/students')
+      ]);
+      setAdmins(adminsRes.data);
+      setStudents(studentsRes.data);
     } catch (err) {
-      console.error('Failed to load local admins:', err);
-      setError('Could not download admin records.');
+      console.error('Failed to load records:', err);
+      setError('Could not download records.');
     } finally {
       setLoading(false);
     }
@@ -105,9 +114,9 @@ const MasterAdmin = () => {
   useEffect(() => {
     if (user && user.role === 'MasterAdmin') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      fetchAdmins();
+      fetchData();
     }
-  }, [user, fetchAdmins]);
+  }, [user, fetchData]);
 
   // Handle Master / Local Admin Login
   const handleAuthSubmit = async (e) => {
@@ -143,23 +152,43 @@ const MasterAdmin = () => {
   // Open Form for Adding
   const handleAddClick = () => {
     setEditAdmin(null);
+    setEditStudent(null);
     setFormName('');
     setFormEmail('');
     setFormPassword('');
     setFormDepartment('');
     setFormStaffId('');
+    setFormSemester('');
+    setFormAdmissionNo('');
     setFormError('');
     setIsModalOpen(true);
   };
 
-  // Open Form for Editing
+  // Open Form for Editing Admin
   const handleEditClick = (admin) => {
     setEditAdmin(admin);
+    setEditStudent(null);
     setFormName(admin.name);
     setFormEmail(admin.email);
     setFormPassword(''); // blank for editing unless they want to change
     setFormDepartment(admin.department);
     setFormStaffId(admin.staffId);
+    setFormSemester('');
+    setFormAdmissionNo('');
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  // Open Form for Editing Student
+  const handleEditStudentClick = (student) => {
+    setEditStudent(student);
+    setEditAdmin(null);
+    setFormName(student.name);
+    setFormEmail(student.email);
+    setFormPassword(''); 
+    setFormDepartment(student.department || '');
+    setFormSemester(student.semester || '');
+    setFormAdmissionNo(student.admissionNo || '');
     setFormError('');
     setIsModalOpen(true);
   };
@@ -169,12 +198,17 @@ const MasterAdmin = () => {
     e.preventDefault();
     setFormError('');
 
-    if (!formName.trim() || !formEmail.trim() || !formDepartment || !formStaffId.trim()) {
-      return setFormError('Please fill in all required fields');
-    }
-
-    if (!editAdmin && !formPassword) {
-      return setFormError('Password is required for new admin accounts');
+    if (editStudent) {
+      if (!formName.trim() || !formEmail.trim() || !formDepartment || !formSemester || !formAdmissionNo.trim()) {
+        return setFormError('Please fill in all required fields');
+      }
+    } else {
+      if (!formName.trim() || !formEmail.trim() || !formDepartment || !formStaffId.trim()) {
+        return setFormError('Please fill in all required fields');
+      }
+      if (!editAdmin && !formPassword) {
+        return setFormError('Password is required for new admin accounts');
+      }
     }
 
     try {
@@ -183,22 +217,31 @@ const MasterAdmin = () => {
         name: formName,
         email: formEmail,
         department: formDepartment,
-        staffId: formStaffId
       };
+      
+      if (editStudent) {
+        formData.semester = formSemester;
+        formData.admissionNo = formAdmissionNo;
+      } else {
+        formData.staffId = formStaffId;
+      }
+      
       if (formPassword) {
         formData.password = formPassword;
       }
 
       if (editAdmin) {
         await api.put(`/master/admins/${editAdmin._id}`, formData);
+      } else if (editStudent) {
+        await api.put(`/master/students/${editStudent._id}`, formData);
       } else {
         await api.post('/master/admins', formData);
       }
 
       setIsModalOpen(false);
-      fetchAdmins();
+      fetchData();
     } catch (err) {
-      setFormError(err.response?.data?.message || 'Failed to save admin account details.');
+      setFormError(err.response?.data?.message || 'Failed to save account details.');
     } finally {
       setFormSubmitting(false);
     }
@@ -209,9 +252,20 @@ const MasterAdmin = () => {
     if (window.confirm(`Are you sure you want to permanently delete the admin account for ${adminName}?`)) {
       try {
         await api.delete(`/master/admins/${adminId}`);
-        fetchAdmins();
+        fetchData();
       } catch (err) {
         alert(err.response?.data?.message || 'Failed to delete admin.');
+      }
+    }
+  };
+
+  const handleDeleteStudentClick = async (studentId, studentName) => {
+    if (window.confirm(`Are you sure you want to permanently delete the student account for ${studentName}?`)) {
+      try {
+        await api.delete(`/master/students/${studentId}`);
+        fetchData();
+      } catch (err) {
+        alert(err.response?.data?.message || 'Failed to delete student.');
       }
     }
   };
@@ -222,8 +276,19 @@ const MasterAdmin = () => {
     return (
       admin.name.toLowerCase().includes(term) ||
       admin.email.toLowerCase().includes(term) ||
-      admin.staffId.toLowerCase().includes(term) ||
-      admin.department.toLowerCase().includes(term)
+      (admin.staffId && admin.staffId.toLowerCase().includes(term)) ||
+      (admin.department && admin.department.toLowerCase().includes(term))
+    );
+  });
+
+  const filteredStudents = students.filter((student) => {
+    const term = searchQuery.toLowerCase();
+    return (
+      student.name.toLowerCase().includes(term) ||
+      student.email.toLowerCase().includes(term) ||
+      (student.admissionNo && student.admissionNo.toLowerCase().includes(term)) ||
+      (student.department && student.department.toLowerCase().includes(term)) ||
+      (student.semester && student.semester.toLowerCase().includes(term))
     );
   });
 
@@ -427,6 +492,16 @@ const MasterAdmin = () => {
             </div>
 
             <div className="glass-panel p-5 rounded-lg border-slate-200 dark:border-white/5 flex items-center gap-4">
+              <div className="p-3 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Total Students</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">{students.length}</p>
+              </div>
+            </div>
+
+            <div className="glass-panel p-5 rounded-lg border-slate-200 dark:border-white/5 flex items-center gap-4">
               <div className="p-3 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
                 <Building className="w-6 h-6" />
               </div>
@@ -441,21 +516,38 @@ const MasterAdmin = () => {
 
           {/* Manage Area */}
           <div className="space-y-4">
-            {/* Search filter panel */}
-            <div className="glass-panel p-4 rounded-lg flex items-center justify-between border-slate-200 dark:border-white/5">
-              <div className="relative w-full md:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
-                <input
-                  type="text"
-                  className="glass-input w-full pl-10 pr-4 py-2 rounded-md text-sm"
-                  placeholder="Search by name, email, department..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+            {/* Search filter panel and Tabs */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setActiveTab('admins')}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${activeTab === 'admins' ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/20'}`}
+                >
+                  Local Admins
+                </button>
+                <button
+                  onClick={() => setActiveTab('students')}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${activeTab === 'students' ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-white/20'}`}
+                >
+                  Students
+                </button>
+              </div>
+              
+              <div className="glass-panel p-2 rounded-lg flex items-center border-slate-200 dark:border-white/5">
+                <div className="relative w-full md:w-80">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  <input
+                    type="text"
+                    className="glass-input w-full pl-10 pr-4 py-2 rounded-md text-sm"
+                    placeholder="Search records..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Admins List Table */}
+            {/* List Table */}
             {loading ? (
               <div className="text-center py-12">
                 <span className="inline-block w-8 h-8 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin" />
@@ -465,59 +557,119 @@ const MasterAdmin = () => {
               <div className="glass-panel p-6 rounded-lg text-center border-slate-200 dark:border-white/5 text-rose-600 dark:text-rose-400 text-sm">
                 {error}
               </div>
-            ) : filteredAdmins.length === 0 ? (
-              <div className="glass-panel p-12 rounded-lg text-center border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 text-sm">
-                No local admin accounts found.
-              </div>
-            ) : (
-              <div className="glass-panel rounded-lg border border-slate-200 dark:border-white/5 overflow-hidden shadow-xl">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="bg-slate-100 dark:bg-white/5 border-b border-slate-200 dark:border-white/5 text-xs font-semibold text-slate-500 dark:text-slate-400 font-medium">
-                        <th className="py-4 px-6">Staff Member</th>
-                        <th className="py-4 px-6">Staff ID</th>
-                        <th className="py-4 px-6">Department</th>
-                        <th className="py-4 px-6 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 dark:divide-white/5 text-sm">
-                      {filteredAdmins.map((admin) => (
-                        <tr key={admin._id} className="glass-table-row">
-                          <td className="py-4 px-6">
-                            <div className="font-bold text-slate-800 dark:text-white">{admin.name}</div>
-                            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{admin.email}</div>
-                          </td>
-                          <td className="py-4 px-6 font-mono text-xs text-cyan-600 dark:text-cyan-400">
-                            {admin.staffId}
-                          </td>
-                          <td className="py-4 px-6 text-slate-650 dark:text-slate-300">
-                            {admin.department}
-                          </td>
-                          <td className="py-4 px-6 text-right whitespace-nowrap">
-                            <div className="inline-flex items-center gap-2">
-                              <button
-                                onClick={() => handleEditClick(admin)}
-                                className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-500 hover:text-white transition cursor-pointer font-semibold"
-                                title="Edit Admin"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteClick(admin._id, admin.name)}
-                                className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white transition cursor-pointer"
-                                title="Delete Admin"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+            ) : activeTab === 'admins' ? (
+              // Admins Table
+              filteredAdmins.length === 0 ? (
+                <div className="glass-panel p-12 rounded-lg text-center border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 text-sm">
+                  No local admin accounts found.
                 </div>
-              </div>
+              ) : (
+                <div className="glass-panel rounded-lg border border-slate-200 dark:border-white/5 overflow-hidden shadow-xl">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-100 dark:bg-white/5 border-b border-slate-200 dark:border-white/5 text-xs font-semibold text-slate-500 dark:text-slate-400 font-medium">
+                          <th className="py-4 px-6">Staff Member</th>
+                          <th className="py-4 px-6">Staff ID</th>
+                          <th className="py-4 px-6">Department</th>
+                          <th className="py-4 px-6 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 dark:divide-white/5 text-sm">
+                        {filteredAdmins.map((admin) => (
+                          <tr key={admin._id} className="glass-table-row">
+                            <td className="py-4 px-6">
+                              <div className="font-bold text-slate-800 dark:text-white">{admin.name}</div>
+                              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{admin.email}</div>
+                            </td>
+                            <td className="py-4 px-6 font-mono text-xs text-cyan-600 dark:text-cyan-400">
+                              {admin.staffId}
+                            </td>
+                            <td className="py-4 px-6 text-slate-650 dark:text-slate-300">
+                              {admin.department}
+                            </td>
+                            <td className="py-4 px-6 text-right whitespace-nowrap">
+                              <div className="inline-flex items-center gap-2">
+                                <button
+                                  onClick={() => handleEditClick(admin)}
+                                  className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-500 hover:text-white transition cursor-pointer font-semibold"
+                                  title="Edit Admin"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteClick(admin._id, admin.name)}
+                                  className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white transition cursor-pointer"
+                                  title="Delete Admin"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )
+            ) : (
+              // Students Table
+              filteredStudents.length === 0 ? (
+                <div className="glass-panel p-12 rounded-lg text-center border-slate-200 dark:border-white/5 text-slate-500 dark:text-slate-400 text-sm">
+                  No student accounts found.
+                </div>
+              ) : (
+                <div className="glass-panel rounded-lg border border-slate-200 dark:border-white/5 overflow-hidden shadow-xl">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-100 dark:bg-white/5 border-b border-slate-200 dark:border-white/5 text-xs font-semibold text-slate-500 dark:text-slate-400 font-medium">
+                          <th className="py-4 px-6">Student Member</th>
+                          <th className="py-4 px-6">Admission No</th>
+                          <th className="py-4 px-6">Dept & Sem</th>
+                          <th className="py-4 px-6 text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 dark:divide-white/5 text-sm">
+                        {filteredStudents.map((student) => (
+                          <tr key={student._id} className="glass-table-row">
+                            <td className="py-4 px-6">
+                              <div className="font-bold text-slate-800 dark:text-white">{student.name}</div>
+                              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{student.email}</div>
+                            </td>
+                            <td className="py-4 px-6 font-mono text-xs text-cyan-600 dark:text-cyan-400">
+                              {student.admissionNo}
+                            </td>
+                            <td className="py-4 px-6 text-slate-650 dark:text-slate-300">
+                              <div className="font-medium">{student.department}</div>
+                              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Sem: {student.semester}</div>
+                            </td>
+                            <td className="py-4 px-6 text-right whitespace-nowrap">
+                              <div className="inline-flex items-center gap-2">
+                                <button
+                                  onClick={() => handleEditStudentClick(student)}
+                                  className="p-2 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-500 hover:text-white transition cursor-pointer font-semibold"
+                                  title="Edit Student"
+                                >
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteStudentClick(student._id, student.name)}
+                                  className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white transition cursor-pointer"
+                                  title="Delete Student"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )
             )}
           </div>
         </main>
@@ -533,7 +685,7 @@ const MasterAdmin = () => {
             <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-white/5 mb-4">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <CheckSquare className="w-5 h-5 text-yellow-600 dark:text-yellow-500" />
-                {editAdmin ? 'Edit Local Admin' : 'Provision Local Admin'}
+                {editAdmin ? 'Edit Local Admin' : editStudent ? 'Edit Student' : 'Provision Local Admin'}
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -553,7 +705,7 @@ const MasterAdmin = () => {
               )}
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">Staff Full Name</label>
+                <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">{editStudent ? 'Student Full Name' : 'Staff Full Name'}</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
                   <input
@@ -568,20 +720,37 @@ const MasterAdmin = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">Staff ID</label>
-                  <div className="relative">
-                    <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
-                    <input
-                      type="text"
-                      className="w-full glass-input pl-9 pr-3 py-2 rounded-lg text-xs font-mono"
-                      placeholder="STF-2026-XXXX"
-                      value={formStaffId}
-                      onChange={(e) => setFormStaffId(e.target.value)}
-                      required
-                    />
+                {editStudent ? (
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">Admission No</label>
+                    <div className="relative">
+                      <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
+                      <input
+                        type="text"
+                        className="w-full glass-input pl-9 pr-3 py-2 rounded-lg text-xs font-mono"
+                        placeholder="e.g. 21CS001"
+                        value={formAdmissionNo}
+                        onChange={(e) => setFormAdmissionNo(e.target.value)}
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">Staff ID</label>
+                    <div className="relative">
+                      <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
+                      <input
+                        type="text"
+                        className="w-full glass-input pl-9 pr-3 py-2 rounded-lg text-xs font-mono"
+                        placeholder="STF-2026-XXXX"
+                        value={formStaffId}
+                        onChange={(e) => setFormStaffId(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">Department</label>
@@ -601,6 +770,23 @@ const MasterAdmin = () => {
                 </div>
               </div>
 
+              {editStudent && (
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">Semester</label>
+                  <select
+                    className="glass-input w-full px-3 py-2 rounded-lg text-xs cursor-pointer"
+                    value={formSemester}
+                    onChange={(e) => setFormSemester(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled>Select Sem</option>
+                    {['S1','S2','S3','S4','S5','S6','S7','S8'].map((sem) => (
+                      <option key={sem} value={sem}>{sem}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">Email Address (Login ID)</label>
                 <div className="relative">
@@ -618,17 +804,17 @@ const MasterAdmin = () => {
 
               <div className="space-y-1">
                 <label className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-                  {editAdmin ? 'New Password (Leave blank to keep current)' : 'Account Password'}
+                  {editAdmin || editStudent ? 'New Password (Leave blank to keep current)' : 'Account Password'}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 dark:text-slate-400" />
                   <input
                     type="password"
                     className="w-full glass-input pl-9 pr-3 py-2 rounded-lg text-xs"
-                    placeholder={editAdmin ? '•••••••• (unchanged)' : '••••••••'}
+                    placeholder={(editAdmin || editStudent) ? '•••••••• (unchanged)' : '••••••••'}
                     value={formPassword}
                     onChange={(e) => setFormPassword(e.target.value)}
-                    required={!editAdmin}
+                    required={!editAdmin && !editStudent}
                   />
                 </div>
               </div>
