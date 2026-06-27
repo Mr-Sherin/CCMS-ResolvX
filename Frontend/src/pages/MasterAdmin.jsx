@@ -271,26 +271,22 @@ const MasterAdmin = () => {
   };
 
   // Filter list
-  const filteredAdmins = admins.filter((admin) => {
-    const term = searchQuery.toLowerCase();
-    return (
-      admin.name.toLowerCase().includes(term) ||
-      admin.email.toLowerCase().includes(term) ||
-      (admin.staffId && admin.staffId.toLowerCase().includes(term)) ||
-      (admin.department && admin.department.toLowerCase().includes(term))
-    );
-  });
+  const filteredAdmins = admins.filter(
+    (a) =>
+      (a.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (a.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (a.department || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (a.staffId || '').toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const filteredStudents = students.filter((student) => {
-    const term = searchQuery.toLowerCase();
-    return (
-      student.name.toLowerCase().includes(term) ||
-      student.email.toLowerCase().includes(term) ||
-      (student.admissionNo && student.admissionNo.toLowerCase().includes(term)) ||
-      (student.department && student.department.toLowerCase().includes(term)) ||
-      (student.semester && student.semester.toLowerCase().includes(term))
-    );
-  });
+  const filteredStudents = students.filter(
+    (s) =>
+      (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.admissionNo || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.department || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.semester || '').toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Render Login view if user is not authenticated as MasterAdmin
   if (!user || user.role !== 'MasterAdmin') {

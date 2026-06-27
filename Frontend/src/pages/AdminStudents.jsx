@@ -71,9 +71,11 @@ const AdminStudents = () => {
 
   const filteredStudents = students.filter(
     (s) =>
-      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.admissionNo?.toLowerCase().includes(searchQuery.toLowerCase())
+      (s.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.admissionNo || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.department || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.semester || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleEditStudentClick = (student) => {
