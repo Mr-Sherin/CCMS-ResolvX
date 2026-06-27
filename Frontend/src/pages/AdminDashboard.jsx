@@ -55,6 +55,17 @@ const AdminDashboard = () => {
     setDateFilter('');
   };
 
+  const handleDeleteComplaint = async (id) => {
+    if (window.confirm('Are you sure you want to permanently delete this complaint?')) {
+      try {
+        await api.delete(`/complaints/${id}`);
+        fetchAdminData();
+      } catch (err) {
+        alert(err.response?.data?.message || 'Failed to delete complaint.');
+      }
+    }
+  };
+
   return (
     <div className="bg-slate-50 dark:bg-[#000000] min-h-screen text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-300">
       <Navbar />
@@ -143,6 +154,7 @@ const AdminDashboard = () => {
               complaints={complaints}
               userRole="Admin"
               loading={loading}
+              onDelete={handleDeleteComplaint}
             />
           </div>
         </main>

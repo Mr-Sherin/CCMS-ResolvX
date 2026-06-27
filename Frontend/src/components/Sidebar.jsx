@@ -57,6 +57,10 @@ const Sidebar = ({ onOpenRaiseForm }) => {
                   <LayoutDashboard className="w-4 h-4" />
                   Admin Dashboard
                 </NavLink>
+                <NavLink to="/admin/students" className={navLinkClass}>
+                  <User className="w-4 h-4" />
+                  Manage Students
+                </NavLink>
                 <NavLink to="/complaints" className={navLinkClass}>
                   <FileSpreadsheet className="w-4 h-4" />
                   Review Logs

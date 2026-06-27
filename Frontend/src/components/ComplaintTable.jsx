@@ -181,22 +181,22 @@ const ComplaintTable = ({
                   </button>
 
                   {userRole === 'Student' && c.status === 'Pending' && (
-                    <>
-                      <button
-                        onClick={() => onEdit(c)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition cursor-pointer font-semibold"
-                      >
-                        <Edit className="w-3.5 h-3.5" />
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => onDelete(c._id)}
-                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white transition cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        Delete
-                      </button>
-                    </>
+                    <button
+                      onClick={() => onEdit(c)}
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition cursor-pointer font-semibold"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                      Edit
+                    </button>
+                  )}
+                  {((userRole === 'Student' && c.status === 'Pending') || userRole === 'Admin' || userRole === 'MasterAdmin') && (
+                    <button
+                      onClick={() => onDelete(c._id)}
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white transition cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Delete
+                    </button>
                   )}
                 </div>
               </div>
@@ -256,22 +256,22 @@ const ComplaintTable = ({
                           </button>
 
                           {userRole === 'Student' && c.status === 'Pending' && (
-                            <>
-                              <button
-                                onClick={() => onEdit(c)}
-                                className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition cursor-pointer font-semibold"
-                                title="Edit"
-                              >
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => onDelete(c._id)}
-                                className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white transition cursor-pointer"
-                                title="Delete"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </>
+                            <button
+                              onClick={() => onEdit(c)}
+                              className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500 hover:text-white transition cursor-pointer font-semibold"
+                              title="Edit"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                          )}
+                          {((userRole === 'Student' && c.status === 'Pending') || userRole === 'Admin' || userRole === 'MasterAdmin') && (
+                            <button
+                              onClick={() => onDelete(c._id)}
+                              className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white transition cursor-pointer"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           )}
                         </div>
                       </td>

@@ -113,8 +113,8 @@ router.delete('/admins/:id', protect, masterAdmin, async (req, res) => {
 
 // @desc    Get all students
 // @route   GET /api/master/students
-// @access  Private (Master Admin)
-router.get('/students', protect, masterAdmin, async (req, res) => {
+// @access  Private (Admin / Master Admin)
+router.get('/students', protect, admin, async (req, res) => {
   try {
     const students = await User.find({ role: 'Student' }).select('-password');
     res.json(students);
@@ -125,8 +125,8 @@ router.get('/students', protect, masterAdmin, async (req, res) => {
 
 // @desc    Edit a student
 // @route   PUT /api/master/students/:id
-// @access  Private (Master Admin)
-router.put('/students/:id', protect, masterAdmin, async (req, res) => {
+// @access  Private (Admin / Master Admin)
+router.put('/students/:id', protect, admin, async (req, res) => {
   const { name, email, password, department, semester, admissionNo } = req.body;
 
   try {
@@ -165,8 +165,8 @@ router.put('/students/:id', protect, masterAdmin, async (req, res) => {
 
 // @desc    Delete a student
 // @route   DELETE /api/master/students/:id
-// @access  Private (Master Admin)
-router.delete('/students/:id', protect, masterAdmin, async (req, res) => {
+// @access  Private (Admin / Master Admin)
+router.delete('/students/:id', protect, admin, async (req, res) => {
   try {
     const studentUser = await User.findById(req.params.id);
 

@@ -11,6 +11,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ComplaintList from './pages/ComplaintList';
 import ComplaintDetails from './pages/ComplaintDetails';
 import MasterAdmin from './pages/MasterAdmin';
+import AdminStudents from './pages/AdminStudents';
 import { ShieldAlert, Home as HomeIcon } from 'lucide-react';
 import './App.css';
 
@@ -112,6 +113,14 @@ const App = () => {
                 element={
                   <RoleRoute allowedRoles={['Admin', 'MasterAdmin']}>
                     <AdminDashboard />
+                  </RoleRoute>
+                }
+              />
+              <Route
+                path="/admin/students"
+                element={
+                  <RoleRoute allowedRoles={['Admin', 'MasterAdmin']}>
+                    <AdminStudents />
                   </RoleRoute>
                 }
               />
