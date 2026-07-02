@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext';
 import { Eye, EyeOff, ShieldAlert, Sun, Moon, ChevronLeft, ChevronRight, ChevronDown, Check, ArrowLeft } from 'lucide-react';
+import api from '../services/api';
 import ParticleMesh from '../components/ParticleMesh';
 import resolvxIcon from '../assets/resolvx_icon.png';
 import authV1 from '../assets/auth_v1.png';
@@ -24,6 +25,10 @@ const Register = () => {
   const [admissionNo, setAdmissionNo] = useState('');
   const [department, setDepartment] = useState('');
   const [semester, setSemester] = useState('');
+  
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -80,8 +85,8 @@ const Register = () => {
     e.preventDefault();
     setError('');
 
-    if (!name || !email || !password || !confirmPassword || !department || !admissionNo || !semester) {
-      return setError('Please fill in all fields (Name, Admission No, Email, Department, Semester, Password)');
+    if (!name || !email || !password || !confirmPassword || !department || !admissionNo || !semester || !otp) {
+      return setError('Please fill in all fields (including OTP).');
     }
 
     if (password !== confirmPassword) {
@@ -98,13 +103,30 @@ const Register = () => {
         admissionNo,
         undefined,
         department,
-        semester
+        semester,
+        otp
       );
       navigate('/student-dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed. Try again.');
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleSendOtp = async () => {
+    if (!email) {
+      return setError('Please enter your email first.');
+    }
+    try {
+      setIsSendingOtp(true);
+      setError('');
+      await api.post('/auth/send-otp', { email });
+      setOtpSent(true);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to send OTP.');
+    } finally {
+      setIsSendingOtp(false);
     }
   };
 
@@ -197,22 +219,51 @@ const Register = () => {
                   />
                 </div>
 
-                {/* Email Address */}
-                <div className="space-y-1">
+                {/* Email Address (Spans 2 columns) */}
+                <div className="space-y-1 sm:col-span-2">
                   <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold tracking-wider">
                     Email Address
                   </label>
-                  <input
-                    type="email"
-                    className="w-full bg-transparent border-b border-slate-200 dark:border-white/10 py-2 text-slate-800 dark:text-slate-100 focus:border-cyan-500 dark:focus:border-cyan-400 focus:outline-none transition-colors text-sm rounded-none pl-0 pr-0"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="email"
+                      className="w-full bg-transparent border-b border-slate-200 dark:border-white/10 py-2 text-slate-800 dark:text-slate-100 focus:border-cyan-500 dark:focus:border-cyan-400 focus:outline-none transition-colors text-sm rounded-none pl-0 pr-0"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      disabled={otpSent}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSendOtp}
+                      disabled={isSendingOtp || otpSent || !email}
+                      className="px-4 py-1.5 whitespace-nowrap bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium text-xs rounded-lg transition-colors border border-slate-200 dark:border-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSendingOtp ? 'Sending...' : (otpSent ? 'Sent' : 'Send OTP')}
+                    </button>
+                  </div>
                 </div>
 
-                {/* Department */}
+                {/* OTP Input (Spans 2 columns) */}
+                {otpSent && (
+                  <div className="space-y-1 sm:col-span-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold tracking-wider flex items-center gap-2">
+                      Enter OTP <span className="text-[10px] font-normal text-cyan-600 dark:text-cyan-400">(Sent to {email})</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full bg-transparent border-b border-slate-200 dark:border-white/10 py-2 text-slate-800 dark:text-slate-100 focus:border-cyan-500 dark:focus:border-cyan-400 focus:outline-none transition-colors text-sm rounded-none pl-0 pr-0"
+                      placeholder="6-digit code"
+                      maxLength={6}
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value)}
+                      required
+                    />
+                  </div>
+                )}
+
+                {/* Department (Spans 1 column now) */}
                 <div className="space-y-1">
                   <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold tracking-wider">
                     Department
@@ -227,8 +278,8 @@ const Register = () => {
                   />
                 </div>
 
-                {/* Semester (Spans 2 columns) */}
-                <div className="space-y-1 sm:col-span-2" ref={semesterRef}>
+                {/* Semester (Spans 1 column now) */}
+                <div className="space-y-1" ref={semesterRef}>
                   <label className="text-xs text-slate-500 dark:text-slate-400 font-semibold tracking-wider">
                     Semester
                   </label>

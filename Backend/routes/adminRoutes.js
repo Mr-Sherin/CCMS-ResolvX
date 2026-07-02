@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Complaint = require('../models/Complaint');
 const { protect, admin } = require('../middleware/authMiddleware');
+const sendEmail = require('../utils/sendEmail');
 
 // @desc    Get all complaints with optional date filter
 // @route   GET /api/admin/complaints
@@ -73,6 +74,20 @@ router.put('/status/:id', protect, admin, async (req, res) => {
     const obj = updatedComplaint.toObject();
     obj.createdBy = obj.studentId;
     obj.createdDate = obj.createdAt;
+
+    // Send email notification to student
+    try {
+      const message = `Dear ${obj.studentId.name},\n\nThere has been an update to your complaint titled "${obj.title}".\n\nNew Status: ${obj.status}\nResolution Details: ${obj.resolutionDetails || 'N/A'}\n\nPlease log in to the CCMS portal for more details.\n\nRegards,\nCCMS Admin`;
+      
+      await sendEmail({
+        email: obj.studentId.email,
+        subject: `Update on your Complaint: ${obj.title}`,
+        message: message,
+      });
+    } catch (emailError) {
+      console.error('Email could not be sent:', emailError);
+      // Not failing the response if email sending fails
+    }
 
     res.json(obj);
   } catch (error) {
