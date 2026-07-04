@@ -28,6 +28,15 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
+// Debug Route to check if env variables are loaded (DO NOT RETURN ACTUAL PASSWORDS)
+app.get('/api/debug-env', (req, res) => {
+  res.json({
+    smtpHost: process.env.SMTP_HOST ? process.env.SMTP_HOST : 'NOT SET',
+    smtpPort: process.env.SMTP_PORT ? process.env.SMTP_PORT : 'NOT SET',
+    useDummyEmail: process.env.USE_DUMMY_EMAIL ? process.env.USE_DUMMY_EMAIL : 'NOT SET'
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
