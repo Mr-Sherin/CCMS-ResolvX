@@ -33,7 +33,8 @@ app.get('/api/debug-env', (req, res) => {
   res.json({
     smtpHost: process.env.SMTP_HOST ? process.env.SMTP_HOST : 'NOT SET',
     smtpPort: process.env.SMTP_PORT ? process.env.SMTP_PORT : 'NOT SET',
-    useDummyEmail: process.env.USE_DUMMY_EMAIL ? process.env.USE_DUMMY_EMAIL : 'NOT SET'
+    useDummyEmail: process.env.USE_DUMMY_EMAIL ? process.env.USE_DUMMY_EMAIL : 'NOT SET',
+    dbState: require('mongoose').connection.readyState
   });
 });
 
